@@ -81,7 +81,7 @@ public class OpMode extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor left = null;
     private DcMotor right = null;
-    private CRServo indexer = null;
+    private CRServo Indexer = null;
 //    private IntegratingGyroscope gyro;
 //    private NavxMicroNavigationSensor navxMicro;
     private boolean start = false;
@@ -107,8 +107,8 @@ public class OpMode extends LinearOpMode {
         // teleMotor = hardwareMap.get(DcMotor.class, "tele");
             //armMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfNew);
 
- ;
-            indexer = hardwareMap.get(CRServo.class, "Indexer");
+
+            Indexer = hardwareMap.get(CRServo.class, "Indexer");
 
 //            navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
 //            gyro = (IntegratingGyroscope)navxMicro;
@@ -128,7 +128,7 @@ public class OpMode extends LinearOpMode {
             right.setDirection(DcMotor.Direction.FORWARD);
             //rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
             //rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-            indexer.setDirection(CRServo.Direction.FORWARD);
+            Indexer.setDirection(CRServo.Direction.FORWARD);
             intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             flywheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -202,16 +202,27 @@ public class OpMode extends LinearOpMode {
 
 
 
-                if (gamepad2.right_bumper) {
+                if (gamepad2.b) {
 
-                    Indexer.setPosition(0.15);
+                    Indexer.setPower(0.15);
                 }
 
                 else {
     //                Wrist.setPosition(0.85);
-                     Indexer.setPosition(0.5);
+                     Indexer.setPower(0.5);
 
                 }
+                if (gamepad2.right_bumper) {
+
+                    intakeMotor.setPower(1);
+                }
+
+                else {
+                    //                Wrist.setPosition(0.85);
+                    intakeMotor.setPower(0);
+
+                }
+                if (gamep
                 if (gamepad2.left_bumper) {
 
                     flywheelMotor.setPower(1);
@@ -281,7 +292,6 @@ public class OpMode extends LinearOpMode {
                // telemetry.addData("target",  armTarget);
     //            telemetry.addData("Gyro1",  gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).firstAngle);
     //            telemetry.addData("Gyro2",  gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).secondAngle);
-                telemetry.addData("Angle",  gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle);
                 telemetry.addData("Reversed:",reversed);
                 telemetry.update();
             }
