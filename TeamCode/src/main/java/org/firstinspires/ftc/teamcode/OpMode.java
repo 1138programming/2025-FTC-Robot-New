@@ -82,8 +82,8 @@ public class OpMode extends LinearOpMode {
     private DcMotor left = null;
     private DcMotor right = null;
     private CRServo indexer = null;
-    private IntegratingGyroscope gyro;
-    private NavxMicroNavigationSensor navxMicro;
+//    private IntegratingGyroscope gyro;
+//    private NavxMicroNavigationSensor navxMicro;
     private boolean start = false;
     private boolean reversed  = false;
     private boolean lastpress = false;
@@ -96,22 +96,22 @@ public class OpMode extends LinearOpMode {
             int last = 0;
             // Initialize the hardware variables. Note that the strings used here must correspond
             // to the names assigned during the robot configuration step on the DS or RC devices.
-            DcMotor left  = hardwareMap.get(DcMotor.class, "Left_Front");
-            DcMotor right  = hardwareMap.get(DcMotor.class, "Left_Back");
-           // rightFrontDrive = hardwareMap.get(DcMotor.class, "Right_Front");
-            //rightBackDrive = hardwareMap.get(DcMotor.class, "Right_Back");
+            DcMotor left  = hardwareMap.get(DcMotor.class, "LeftDrive");
+            DcMotor right  = hardwareMap.get(DcMotor.class, "RightDrive");
+
 
         //private DcMotorEx armMotor = null;
             DcMotor intakeMotor = hardwareMap.get(DcMotorEx.class, "Intake");
-           // teleMotor = hardwareMap.get(DcMotor.class, "tele");
+            DcMotor flywheelMotor = hardwareMap.get(DcMotorEx.class, "Flywheel");
+
+        // teleMotor = hardwareMap.get(DcMotor.class, "tele");
             //armMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfNew);
 
-            //wristL = hardwareMap.get(CRServo.class, "wristL");
-            //wristR = hardwareMap.get(CRServo.class, "wristR");
-            indexer = hardwareMap.get(CRServo.class, "indexer");
+ ;
+            indexer = hardwareMap.get(CRServo.class, "Indexer");
 
-            navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
-            gyro = (IntegratingGyroscope)navxMicro;
+//            navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
+//            gyro = (IntegratingGyroscope)navxMicro;
 
 
             // ########################################################################################
@@ -130,9 +130,11 @@ public class OpMode extends LinearOpMode {
             //rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
             indexer.setDirection(CRServo.Direction.FORWARD);
             intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            flywheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
-            // A timer helps provide feedback while calibration is taking place
+
+        // A timer helps provide feedback while calibration is taking place
             ElapsedTime timer = new ElapsedTime();
 
             // Wait for the game to start (driver presses START)
@@ -199,23 +201,26 @@ public class OpMode extends LinearOpMode {
     // pickup 204
 
 
-                /*
+
                 if (gamepad2.right_bumper) {
-                    start = true;
-                    Wrist.setPosition(0.15);
+
+                    Indexer.setPosition(0.15);
                 }
-                else if (gamepad2.right_trigger > 0) {
-                    start = true;
-                    Wrist.setPosition(0.85);
-                }
-                else  if (start){
-                    Wrist.setPosition(0.5);
-                }
+
                 else {
     //                Wrist.setPosition(0.85);
-                     Wrist.setPosition(0.5);
+                     Indexer.setPosition(0.5);
 
-                } */
+                }
+                if (gamepad2.left_bumper) {
+
+                    flywheelMotor.setPower(1);
+                }
+
+                else {
+                    //                Wrist.setPosition(0.85);
+                    flywheelMotor.setPower(0);
+                }
 
                /* if(gamepad2.right_trigger > 0.1) {
                     claw.setPower(0.1);
