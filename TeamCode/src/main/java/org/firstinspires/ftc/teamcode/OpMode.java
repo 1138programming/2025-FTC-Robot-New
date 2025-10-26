@@ -75,7 +75,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 @TeleOp (name="OpMode 67", group="Linear OpMode")
 
-public abstract class OpMode extends LinearOpMode {
+public class OpMode extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -88,7 +88,7 @@ public abstract class OpMode extends LinearOpMode {
     private boolean reversed  = false;
     private boolean lastpress = false;
 
-
+    @Override
     public void runOpMode() {
             int stop = 2750;
             double speed = 5;
