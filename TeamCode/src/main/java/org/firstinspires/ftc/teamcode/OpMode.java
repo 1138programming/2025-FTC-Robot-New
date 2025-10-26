@@ -148,8 +148,8 @@ public class OpMode extends LinearOpMode {
             // run until the end of the match (driver presses STOP)
             while (opModeIsActive()) {
 
-                double left_right = gamepad1.left_stick_x;
-                double up_down = gamepad1.right_stick_y;
+                double left_right = gamepad1.right_stick_x;
+                double up_down = gamepad1.left_stick_y;
 
                 // Combine the joystick requests for each axis-motion to determine each wheel's power.
                 // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -204,28 +204,30 @@ public class OpMode extends LinearOpMode {
 
                 if (gamepad2.b) {
 
-                    Indexer.setPower(0.15);
+                    Indexer.setPower(1);
                 }
 
                 else {
-    //                Wrist.setPosition(0.85);
                      Indexer.setPower(0.5);
-
                 }
+
                 if (gamepad2.right_bumper) {
 
                     intakeMotor.setPower(1);
                 }
+                if (gamepad2.right_trigger) {
 
+                    intakeMotor.setPower(-1);
+                }
                 else {
                     //                Wrist.setPosition(0.85);
                     intakeMotor.setPower(0);
 
                 }
-                if (gamep
+
                 if (gamepad2.left_bumper) {
 
-                    flywheelMotor.setPower(1);
+                    flywheelMotor.setPower(-1);
                 }
 
                 else {
