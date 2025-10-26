@@ -215,7 +215,7 @@ public class OpMode extends LinearOpMode {
 
                     intakeMotor.setPower(1);
                 }
-                if (gamepad2.right_trigger) {
+                if (gamepad2.right_trigger < 0) {
 
                     intakeMotor.setPower(-1);
                 }
