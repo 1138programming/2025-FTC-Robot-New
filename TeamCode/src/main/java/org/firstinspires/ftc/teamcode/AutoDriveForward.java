@@ -29,20 +29,14 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -74,16 +68,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 
 @TeleOp (name="OpMode 41", group="Linear OpMode")
-
-public class OpMode extends LinearOpMode {
+@Disabled
+public class AutoDriveForward extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor left = null;
     private DcMotor right = null;
     private CRServo Indexer = null;
-    private IntegratingGyroscope gyro;
-    private NavxMicroNavigationSensor navxMicro;
+//    private IntegratingGyroscope gyro;
+//    private NavxMicroNavigationSensor navxMicro;
     private boolean start = false;
     private boolean reversed  = false;
     private boolean lastpress = false;
@@ -110,14 +104,14 @@ public class OpMode extends LinearOpMode {
 
             Indexer = hardwareMap.get(CRServo.class, "Indexer");
 
-            navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
-            gyro = (IntegratingGyroscope)navxMicro; //integratinggyroscope is a wrapper for navxmicronavigator
+//            navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
+//            gyro = (IntegratingGyroscope)navxMicro;
 
 
             // ########################################################################################
             // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
             // ########################################################################################
-            // Most robots need the motors ong one side to be reversed to drive forward.
+            // Most robots need the motors on one side to be reversed to drive forward.
             // The motor reversals shown here are for a "direct drive" robot (the wheels turn the same direction as the motor shaft)
             // If your robot has additional gear reductions or uses a right-angled drive, it's important to ensure
             // that your motors are turning in the correct direction.  So, start out with the reversals here, BUT
@@ -193,7 +187,7 @@ public class OpMode extends LinearOpMode {
 
                 // Turns on speedToggle when the left bumper is pressed
                 // (starts fast, becomes slower when pressed)
-                speedtoggle = gamepad1.left_bumper;
+                //speedtoggle = gamepad1.left_bumper;
 
 
     // high 1850
@@ -202,11 +196,12 @@ public class OpMode extends LinearOpMode {
 
 
 
-                if (gamepad2.b) {
+                /*
+                if (gamepad1.b) {
 
                     Indexer.setPower(1);
                 }
-                else if (gamepad2.x) {
+                else if (gamepad1.x) {
                     Indexer.setPower(-1);
                 }
                 else {
@@ -214,11 +209,11 @@ public class OpMode extends LinearOpMode {
                 }
 
 
-                if (gamepad2.y) {
+                if (gamepad1.y) {
 
                     intakeMotor.setPower(-1);
                 }
-                else if (gamepad2.a) {
+                else if (gamepad1.a) {
 
                     intakeMotor.setPower(1);
                 }
@@ -228,21 +223,21 @@ public class OpMode extends LinearOpMode {
 
                 }
 
-                if (gamepad2.right_bumper) {
+                if (gamepad1.right_bumper) {
 
-                    flywheelMotor.setPower(-0.75);
+                    flywheelMotor.setPower(-0.7);
                 }
-                else if (gamepad2.right_trigger > 0) {
+                else if (gamepad1.right_trigger > 0) {
 
                     flywheelMotor.setPower(-0.785);
                 }
 
                 else {
-
+                    //                Wrist.setPosition(0.85);
                     flywheelMotor.setPower(0);
                 }
 
-               /* if(gamepad2.right_trigger > 0.1) {
+                if(gamepad2.right_trigger > 0.1) {
                     claw.setPower(0.1);
                 }
                 else if (gamepad2.right_bumper) {

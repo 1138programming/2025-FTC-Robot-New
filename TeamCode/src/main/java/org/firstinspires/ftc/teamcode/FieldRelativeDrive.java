@@ -37,12 +37,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -73,9 +74,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
  */
 
 
-@TeleOp (name="OpMode 41", group="Linear OpMode")
+@TeleOp (name="FieldRelative67", group="Linear OpMode")
 
-public class OpMode extends LinearOpMode {
+public class FieldRelativeDrive extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -96,19 +97,21 @@ public class OpMode extends LinearOpMode {
             int last = 0;
             // Initialize the hardware variables. Note that the strings used here must correspond
             // to the names assigned during the robot configuration step on the DS or RC devices.
-            DcMotor left  = hardwareMap.get(DcMotor.class, "LeftDrive");
-            DcMotor right  = hardwareMap.get(DcMotor.class, "RightDrive");
+            DcMotor leftFront  = hardwareMap.get(DcMotor.class, "LeftFront");
+            DcMotor rightFront  = hardwareMap.get(DcMotor.class, "RightFront");
+            DcMotor leftBack = hardwareMap.get(DcMotor.class, "LeftBack");
+            DcMotor rightBack = hardwareMap.get(DcMotor.class, "RightBack");
 
 
         //private DcMotorEx armMotor = null;
-            DcMotor intakeMotor = hardwareMap.get(DcMotorEx.class, "Intake");
-            DcMotor flywheelMotor = hardwareMap.get(DcMotorEx.class, "Flywheel");
+            //DcMotor intakeMotor = hardwareMap.get(DcMotorEx.class, "Intake");
+            //DcMotor flywheelMotor = hardwareMap.get(DcMotorEx.class, "Flywheel");
 
         // teleMotor = hardwareMap.get(DcMotor.class, "tele");
             //armMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfNew);
 
 
-            Indexer = hardwareMap.get(CRServo.class, "Indexer");
+            //Indexer = hardwareMap.get(CRServo.class, "Indexer");
 
             navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
             gyro = (IntegratingGyroscope)navxMicro; //integratinggyroscope is a wrapper for navxmicronavigator
@@ -124,13 +127,15 @@ public class OpMode extends LinearOpMode {
             // when you first test your robot, push the left joystick forward and observe the direction the wheels turn.
             // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
             // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
-            left.setDirection(DcMotor.Direction.FORWARD);
-            right.setDirection(DcMotor.Direction.FORWARD);
+            leftFront.setDirection(DcMotor.Direction.REVERSE);
+            rightFront.setDirection(DcMotor.Direction.FORWARD);
+            leftBack.setDirection(DcMotor.Direction.REVERSE);
+            rightBack.setDirection(DcMotor.Direction.FORWARD);
             //rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
             //rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-            Indexer.setDirection(CRServo.Direction.FORWARD);
-            intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            flywheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            //Indexer.setDirection(CRServo.Direction.FORWARD);
+            //intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            //flywheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
 
@@ -144,17 +149,18 @@ public class OpMode extends LinearOpMode {
             waitForStart();
             runtime.reset();
 
+            Drivebase drivebase = new Drivebase(leftFront, leftBack, rightFront, rightBack, gyro);
 
             // run until the end of the match (driver presses STOP)
             while (opModeIsActive()) {
 
-                double left_right = gamepad1.right_stick_x;
-                double up_down = gamepad1.left_stick_y;
+//                double left_right = gamepad1.right_stick_x;
+//                double up_down = gamepad1.left_stick_y;
 
                 // Combine the joystick requests for each axis-motion to determine each wheel's power.
                 // Set up a variable for each drive wheel to save the power level for telemetry.
-                double left_motor_power = (left_right + up_down) * speed;
-                double right_motor_power = (left_right - up_down) * speed;
+                //double left_motor_power = (left_right + up_down) * speed;
+                //double right_motor_power = (left_right - up_down) * speed;
 
                 // Normalize the values so no wheel power exceeds 100%
                 // This ensures that the robot maintains the desired motion.
@@ -180,8 +186,8 @@ public class OpMode extends LinearOpMode {
                 */
 
                 // Send calculated power to wheels
-                left.setPower(left_motor_power);
-                right.setPower(right_motor_power);
+//                left.setPower(left_motor_power);
+//                right.setPower(right_motor_power);
 
                 /** if (gamepad1.y && !lastpress){
                     reversed = !reversed;
@@ -193,53 +199,64 @@ public class OpMode extends LinearOpMode {
 
                 // Turns on speedToggle when the left bumper is pressed
                 // (starts fast, becomes slower when pressed)
+
                 speedtoggle = gamepad1.left_bumper;
+                double lowSpeed = 0.45;
+                double midSpeed = 0.70;
+                double highSpeed = 0.90;
+
+                if (speedtoggle) {
+                    speed = highSpeed;
+                }
+                else {
+                    speed = lowSpeed;
+                }
 
 
+                drivebase.driveFieldRelative(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, false, (float)speed);
     // high 1850
     //low arm 1371 tele -1013
     // pickup 204
 
 
-
                 if (gamepad2.b) {
 
-                    Indexer.setPower(1);
+                    //Indexer.setPower(1);
                 }
                 else if (gamepad2.x) {
-                    Indexer.setPower(-1);
+                    //Indexer.setPower(-1);
                 }
                 else {
-                    Indexer.setPower(0);
+                    //Indexer.setPower(0);
                 }
 
 
-                if (gamepad2.y) {
 
-                    intakeMotor.setPower(-1);
+                if (gamepad1.y && !lastpress){
+                    drivebase.resetFieldRot();
                 }
                 else if (gamepad2.a) {
 
-                    intakeMotor.setPower(1);
+                    //intakeMotor.setPower(1);
                 }
                 else {
                     //                Wrist.setPosition(0.85);
-                    intakeMotor.setPower(0);
+                    //intakeMotor.setPower(0);
 
                 }
 
                 if (gamepad2.right_bumper) {
 
-                    flywheelMotor.setPower(-0.75);
+                    //flywheelMotor.setPower(-0.75);
                 }
                 else if (gamepad2.right_trigger > 0) {
 
-                    flywheelMotor.setPower(-0.785);
+                    //flywheelMotor.setPower(-0.785);
                 }
 
                 else {
-
-                    flywheelMotor.setPower(0);
+                    //                Wrist.setPosition(0.85);
+                    //flywheelMotor.setPower(0);
                 }
 
                /* if(gamepad2.right_trigger > 0.1) {
@@ -299,8 +316,8 @@ public class OpMode extends LinearOpMode {
                 telemetry.addData("Last", last);
                 // telemetry.addData("ArmisBusyt", armMotor.isBusy());
                // telemetry.addData("target",  armTarget);
-    //            telemetry.addData("Gyro1",  gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).firstAngle);
-    //            telemetry.addData("Gyro2",  gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).secondAngle);
+                telemetry.addData("Gyro1",  gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.DEGREES).firstAngle);
+//                telemetry.addData("Gyro2",  gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).secondAngle);
                 telemetry.addData("Reversed:",reversed);
                 telemetry.update();
             }
