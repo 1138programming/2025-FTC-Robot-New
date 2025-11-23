@@ -74,15 +74,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  */
 
 
-@TeleOp (name="FieldRelative67", group="Linear OpMode")
+@TeleOp (name="FieldRelative42", group="Linear OpMode")
 
 public class FieldRelativeDrive extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor left = null;
-    private DcMotor right = null;
-    private CRServo Indexer = null;
+
     private IntegratingGyroscope gyro;
     private NavxMicroNavigationSensor navxMicro;
     private boolean start = false;
@@ -101,6 +99,9 @@ public class FieldRelativeDrive extends LinearOpMode {
             DcMotor rightFront  = hardwareMap.get(DcMotor.class, "RightFront");
             DcMotor leftBack = hardwareMap.get(DcMotor.class, "LeftBack");
             DcMotor rightBack = hardwareMap.get(DcMotor.class, "RightBack");
+            DcMotor intakeMotor = hardwareMap.get(DcMotor.class, "Intake");
+            DcMotor flywheelMotor = hardwareMap.get(DcMotor.class, "Flywheel");
+            CRServo Indexer = hardwareMap.get(CRServo.class, "Indexer");
 
 
         //private DcMotorEx armMotor = null;
@@ -131,6 +132,8 @@ public class FieldRelativeDrive extends LinearOpMode {
             rightFront.setDirection(DcMotor.Direction.FORWARD);
             leftBack.setDirection(DcMotor.Direction.REVERSE);
             rightBack.setDirection(DcMotor.Direction.FORWARD);
+            intakeMotor.setDirection(DcMotor.Direction.FORWARD);
+            flywheelMotor.setDirection(DcMotor.Direction.FORWARD);
             //rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
             //rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
             //Indexer.setDirection(CRServo.Direction.FORWARD);
@@ -219,90 +222,51 @@ public class FieldRelativeDrive extends LinearOpMode {
     // pickup 204
 
 
-                if (gamepad2.b) {
+                if (gamepad1.y) {
 
-                    //Indexer.setPower(1);
+                    Indexer.setPower(1);
                 }
-                else if (gamepad2.x) {
-                    //Indexer.setPower(-1);
+                else if (gamepad1.x) {
+                    Indexer.setPower(-1);
                 }
                 else {
-                    //Indexer.setPower(0);
+                    Indexer.setPower(0);
                 }
 
 
 
-                if (gamepad1.y && !lastpress){
+                if (gamepad1.a) {
+
+                    intakeMotor.setPower(1);
+                }
+                else if (gamepad1.b) {
+                    intakeMotor.setPower(-1);
+                }
+                else {
+                    intakeMotor.setPower(0);
+
+                }
+
+                if (gamepad1.right_bumper) {
+
+                    flywheelMotor.setPower(-0.75);
+                }
+                else if (gamepad1.right_trigger > 0) {
+
+                    flywheelMotor.setPower(-0.785);
+                }
+                else {
+                    flywheelMotor.setPower(0);
+                }
+
+
+                if (gamepad1.dpad_up && !lastpress){
                     drivebase.resetFieldRot();
-                }
-                else if (gamepad2.a) {
-
-                    //intakeMotor.setPower(1);
+                    lastpress = true;
                 }
                 else {
-                    //                Wrist.setPosition(0.85);
-                    //intakeMotor.setPower(0);
-
+                    lastpress = false;
                 }
-
-                if (gamepad2.right_bumper) {
-
-                    //flywheelMotor.setPower(-0.75);
-                }
-                else if (gamepad2.right_trigger > 0) {
-
-                    //flywheelMotor.setPower(-0.785);
-                }
-
-                else {
-                    //                Wrist.setPosition(0.85);
-                    //flywheelMotor.setPower(0);
-                }
-
-               /* if(gamepad2.right_trigger > 0.1) {
-                    claw.setPower(0.1);
-                }
-                else if (gamepad2.right_bumper) {
-                    claw.setPower(0.9);
-                }
-
-                if(Math.abs(gamepad2.left_stick_y) > Math.abs(gamepad2.right_stick_x)) {
-                    if (gamepad2.left_stick_y > 0.1) {
-                        wristR.setPower(0.25);
-                        wristL.setPower(0.25);
-                    } else if (gamepad2.left_stick_y < -0.1) {
-                        wristR.setPower(-0.25);
-                        wristL.setPower(-0.25);
-                    }
-                    else {
-                        wristR.setPower(0);
-                        wristL.setPower(0);
-                    }
-                }
-                else {
-                    if (gamepad2.right_stick_x > 0.1) {
-                        wristR.setPower(0.25);
-                        wristL.setPower(-0.25);
-                    } else if (gamepad2.right_stick_x < -0.1) {
-                        wristR.setPower(-0.25);
-                        wristL.setPower(0.25);
-                    }
-                    else {
-                        wristR.setPower(0);
-                        wristL.setPower(0);
-                    }
-                }
-    //            if (gamepad2.a) {
-    //                Roller.setPosition(0.1);
-    //            }
-    //            else if (gamepad2.b) {
-    //                Roller.setPosition(0.9);
-    //            }
-    //            else {
-    //                Roller.setPosition(0.5);
-    //            }
-
-                */
 
                 // Show the elapsed game time and wheel power.
                 telemetry.addData("Status", "Run Time: " + runtime.toString());

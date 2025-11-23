@@ -68,7 +68,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @TeleOp (name="OpMode 41", group="Linear OpMode")
-@Disabled
+
 public class AutoDriveForward extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
