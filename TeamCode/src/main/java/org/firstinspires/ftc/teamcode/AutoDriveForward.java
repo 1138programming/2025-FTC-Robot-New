@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -36,6 +37,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
@@ -67,7 +69,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 
-@TeleOp (name="OpMode 41", group="Linear OpMode")
+@Autonomous(name="AutonV1", group="Linear OpMode")
 
 public class AutoDriveForward extends LinearOpMode {
 
@@ -81,6 +83,10 @@ public class AutoDriveForward extends LinearOpMode {
     private boolean start = false;
     private boolean reversed  = false;
     private boolean lastpress = false;
+    private Drivebase drivebase;
+
+    private NavxMicroNavigationSensor navxMicro;
+    private IntegratingGyroscope gyro;
 
     @Override
     public void runOpMode() {
@@ -90,8 +96,10 @@ public class AutoDriveForward extends LinearOpMode {
             int last = 0;
             // Initialize the hardware variables. Note that the strings used here must correspond
             // to the names assigned during the robot configuration step on the DS or RC devices.
-            DcMotor left  = hardwareMap.get(DcMotor.class, "LeftDrive");
-            DcMotor right  = hardwareMap.get(DcMotor.class, "RightDrive");
+            DcMotor leftFront  = hardwareMap.get(DcMotor.class, "LeftFront");
+            DcMotor rightFront  = hardwareMap.get(DcMotor.class, "RightFront");
+            DcMotor leftBack = hardwareMap.get(DcMotor.class, "LeftBack");
+            DcMotor rightBack = hardwareMap.get(DcMotor.class, "RightBack");
 
 
         //private DcMotorEx armMotor = null;
@@ -104,8 +112,10 @@ public class AutoDriveForward extends LinearOpMode {
 
             Indexer = hardwareMap.get(CRServo.class, "Indexer");
 
-//            navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
-//            gyro = (IntegratingGyroscope)navxMicro;
+            navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
+            gyro = (IntegratingGyroscope)navxMicro;
+
+            drivebase = new Drivebase(leftFront, leftBack, rightFront,rightBack, gyro);
 
 
             // ########################################################################################
@@ -155,7 +165,7 @@ public class AutoDriveForward extends LinearOpMode {
                // max = Math.max(Math.abs(FrontPower), Math.abs(rightFrontPower));
               //  max = Math.max(max, Math.abs(rightBackPower));
 
-
+                drivebase.drive(100,100,100,true,100);
                 // This is test code:
                 //
                 // Uncomment the following code to test your motor directions.
@@ -185,102 +195,7 @@ public class AutoDriveForward extends LinearOpMode {
                     lastpress = false;
                 } **/
 
-                // Turns on speedToggle when the left bumper is pressed
-                // (starts fast, becomes slower when pressed)
-                //speedtoggle = gamepad1.left_bumper;
 
-
-    // high 1850
-    //low arm 1371 tele -1013
-    // pickup 204
-
-
-
-                /*
-                if (gamepad1.b) {
-
-                    Indexer.setPower(1);
-                }
-                else if (gamepad1.x) {
-                    Indexer.setPower(-1);
-                }
-                else {
-                    Indexer.setPower(0);
-                }
-
-
-                if (gamepad1.y) {
-
-                    intakeMotor.setPower(-1);
-                }
-                else if (gamepad1.a) {
-
-                    intakeMotor.setPower(1);
-                }
-                else {
-                    //                Wrist.setPosition(0.85);
-                    intakeMotor.setPower(0);
-
-                }
-
-                if (gamepad1.right_bumper) {
-
-                    flywheelMotor.setPower(-0.7);
-                }
-                else if (gamepad1.right_trigger > 0) {
-
-                    flywheelMotor.setPower(-0.785);
-                }
-
-                else {
-                    //                Wrist.setPosition(0.85);
-                    flywheelMotor.setPower(0);
-                }
-
-                if(gamepad2.right_trigger > 0.1) {
-                    claw.setPower(0.1);
-                }
-                else if (gamepad2.right_bumper) {
-                    claw.setPower(0.9);
-                }
-
-                if(Math.abs(gamepad2.left_stick_y) > Math.abs(gamepad2.right_stick_x)) {
-                    if (gamepad2.left_stick_y > 0.1) {
-                        wristR.setPower(0.25);
-                        wristL.setPower(0.25);
-                    } else if (gamepad2.left_stick_y < -0.1) {
-                        wristR.setPower(-0.25);
-                        wristL.setPower(-0.25);
-                    }
-                    else {
-                        wristR.setPower(0);
-                        wristL.setPower(0);
-                    }
-                }
-                else {
-                    if (gamepad2.right_stick_x > 0.1) {
-                        wristR.setPower(0.25);
-                        wristL.setPower(-0.25);
-                    } else if (gamepad2.right_stick_x < -0.1) {
-                        wristR.setPower(-0.25);
-                        wristL.setPower(0.25);
-                    }
-                    else {
-                        wristR.setPower(0);
-                        wristL.setPower(0);
-                    }
-                }
-    //            if (gamepad2.a) {
-    //                Roller.setPosition(0.1);
-    //            }
-    //            else if (gamepad2.b) {
-    //                Roller.setPosition(0.9);
-    //            }
-    //            else {
-    //                Roller.setPosition(0.5);
-    //            }
-
-                */
 
                 // Show the elapsed game time and wheel power.
                 telemetry.addData("Status", "Run Time: " + runtime.toString());

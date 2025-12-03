@@ -38,8 +38,11 @@ public class EACenterBot extends LinearOpMode {
         final int encoderResetPos = -400;
         //While Running
         while (opModeIsActive()) {
+
+            //Catapult Code Start
             telemetry.addData("releaseMotorEncoderPos:",releaseMotor.getCurrentPosition());
             telemetry.update();
+
 
             if (gamepad1.dpad_up) {
                 releaseMotorRun = true;
@@ -74,14 +77,16 @@ public class EACenterBot extends LinearOpMode {
                     releaseMotor.setPower(0.0);
                 }
             }
+            //Catapult Code End
+
 
             //Base Code Start
             float leftY = gamepad1.left_stick_y;
             float rightX = gamepad1.right_stick_x;
 
-            leftDrive.setPower(leftY + rightX);
-            rightDrive.setPower(leftY - rightX);
-
+            leftDrive.setPower(-leftY + rightX);
+            rightDrive.setPower(-leftY - rightX);
+            //Base Code End
         }
 
 
