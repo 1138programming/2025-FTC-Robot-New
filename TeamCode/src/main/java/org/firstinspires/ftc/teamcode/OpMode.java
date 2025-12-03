@@ -1,3 +1,5 @@
+
+
 /* Copyright (c) 2021 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -94,6 +96,7 @@ public class OpMode extends LinearOpMode {
             double speed = 5;
             boolean speedtoggle = true;
             int last = 0;
+
             // Initialize the hardware variables. Note that the strings used here must correspond
             // to the names assigned during the robot configuration step on the DS or RC devices.
             DcMotor left  = hardwareMap.get(DcMotor.class, "LeftDrive");
@@ -261,7 +264,7 @@ public class OpMode extends LinearOpMode {
                         wristR.setPower(0);
                         wristL.setPower(0);
                     }
-                }
+                }l
                 else {
                     if (gamepad2.right_stick_x > 0.1) {
                         wristR.setPower(0.25);

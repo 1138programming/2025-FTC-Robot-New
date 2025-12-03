@@ -30,7 +30,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -71,15 +70,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
  */
 
 
-@Autonomous(name="Autodrive67", group="Linear OpMode")
+@TeleOp (name="Normal42", group="Linear OpMode")
 
-public class Auton extends LinearOpMode {
+public class normaldrive extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor left = null;
-    private DcMotor right = null;
-    private CRServo Indexer = null;
+
     private IntegratingGyroscope gyro;
     private NavxMicroNavigationSensor navxMicro;
     private boolean start = false;
@@ -98,6 +95,9 @@ public class Auton extends LinearOpMode {
             DcMotor rightFront  = hardwareMap.get(DcMotor.class, "RightFront");
             DcMotor leftBack = hardwareMap.get(DcMotor.class, "LeftBack");
             DcMotor rightBack = hardwareMap.get(DcMotor.class, "RightBack");
+            DcMotor intakeMotor = hardwareMap.get(DcMotor.class, "Intake");
+            DcMotor flywheelMotor = hardwareMap.get(DcMotor.class, "Flywheel");
+            CRServo Indexer = hardwareMap.get(CRServo.class, "Indexer");
 
 
         //private DcMotorEx armMotor = null;
@@ -128,6 +128,8 @@ public class Auton extends LinearOpMode {
             rightFront.setDirection(DcMotor.Direction.FORWARD);
             leftBack.setDirection(DcMotor.Direction.REVERSE);
             rightBack.setDirection(DcMotor.Direction.FORWARD);
+            intakeMotor.setDirection(DcMotor.Direction.FORWARD);
+            flywheelMotor.setDirection(DcMotor.Direction.FORWARD);
             //rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
             //rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
             //Indexer.setDirection(CRServo.Direction.FORWARD);
@@ -148,11 +150,119 @@ public class Auton extends LinearOpMode {
 
             Drivebase drivebase = new Drivebase(leftFront, leftBack, rightFront, rightBack, gyro);
 
-            drivebase.drive(0,1,0,false,1);
-
             // run until the end of the match (driver presses STOP)
             while (opModeIsActive()) {
 
+//                double left_right = gamepad1.right_stick_x;
+//                double up_down = gamepad1.left_stick_y;
+
+                // Combine the joystick requests for each axis-motion to determine each wheel's power.
+                // Set up a variable for each drive wheel to save the power level for telemetry.
+                //double left_motor_power = (left_right + up_down) * speed;
+                //double right_motor_power = (left_right - up_down) * speed;
+
+                // Normalize the values so no wheel power exceeds 100%
+                // This ensures that the robot maintains the desired motion.
+               // max = Math.max(Math.abs(FrontPower), Math.abs(rightFrontPower));
+              //  max = Math.max(max, Math.abs(rightBackPower));
+
+
+                // This is test code:
+                //
+                // Uncomment the following code to test your motor directions.
+                // Each button should make the corresponding motor run FORWARD.
+                //   1) First get all the motors to take to correct positions on the robot
+                //      by adjusting your Robot Configuration if necessary.
+                //   2) Then make sure they run in the correct direction by modifying the
+                //      the setDirection() calls above.
+                // Once the correct motors move in the correct direction re-comment this code.
+
+                /*
+                FrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
+                BackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
+                rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
+                rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
+                */
+
+                // Send calculated power to wheels
+//                left.setPower(left_motor_power);
+//                right.setPower(right_motor_power);
+
+                /** if (gamepad1.y && !lastpress){
+                    reversed = !reversed;
+                    lastpress = true;
+                }
+                else if (!gamepad1.y){
+                    lastpress = false;
+                } **/
+
+                // Turns on speedToggle when the left bumper is pressed
+                // (starts fast, becomes slower when pressed)
+
+                speedtoggle = gamepad1.left_bumper;
+                double lowSpeed = 0.45;
+                double midSpeed = 0.70;
+                double highSpeed = 0.90;
+
+                if (speedtoggle) {
+                    speed = highSpeed;
+                }
+                else {
+                    speed = lowSpeed;
+                }
+
+
+                drivebase.drive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, false, (float)speed);
+    // high 1850
+    //low arm 1371 tele -1013
+    // pickup 204
+
+
+                if (gamepad1.y) {
+
+                    Indexer.setPower(1);
+                }
+                else if (gamepad1.x) {
+                    Indexer.setPower(-1);
+                }
+                else {
+                    Indexer.setPower(0);
+                }
+
+
+
+                if (gamepad1.a) {
+
+                    intakeMotor.setPower(1);
+                }
+                else if (gamepad1.b) {
+                    intakeMotor.setPower(-1);
+                }
+                else {
+                    intakeMotor.setPower(0);
+
+                }
+
+                if (gamepad1.right_bumper) {
+
+                    flywheelMotor.setPower(-0.75);
+                }
+                else if (gamepad1.right_trigger > 0) {
+
+                    flywheelMotor.setPower(-0.785);
+                }
+                else {
+                    flywheelMotor.setPower(0);
+                }
+
+
+                if (gamepad1.dpad_up && !lastpress){
+                    drivebase.resetFieldRot();
+                    lastpress = true;
+                }
+                else {
+                    lastpress = false;
+                }
 
                 // Show the elapsed game time and wheel power.
                 telemetry.addData("Status", "Run Time: " + runtime.toString());
