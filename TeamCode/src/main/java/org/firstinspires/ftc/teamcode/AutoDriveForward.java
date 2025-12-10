@@ -76,20 +76,12 @@ public class AutoDriveForward extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor left = null;
-    private DcMotor right = null;
-    private CRServo Indexer = null;
     private IntegratingGyroscope gyro;
     private NavxMicroNavigationSensor navxMicro;
-    private boolean start = false;
     private boolean reversed  = false;
-    private boolean lastpress = false;
 
     @Override
     public void runOpMode() {
-            int stop = 2750;
-            double speed = 5;
-            boolean speedtoggle = true;
             int last = 0;
             // Initialize the hardware variables. Note that the strings used here must correspond
             // to the names assigned during the robot configuration step on the DS or RC devices.
@@ -98,16 +90,6 @@ public class AutoDriveForward extends LinearOpMode {
             DcMotor leftBack = hardwareMap.get(DcMotor.class, "LeftBack");
             DcMotor rightBack = hardwareMap.get(DcMotor.class, "RightBack");
 
-
-        //private DcMotorEx armMotor = null;
-            //DcMotor intakeMotor = hardwareMap.get(DcMotorEx.class, "Intake");
-            //DcMotor flywheelMotor = hardwareMap.get(DcMotorEx.class, "Flywheel");
-
-        // teleMotor = hardwareMap.get(DcMotor.class, "tele");
-            //armMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfNew);
-
-
-            //Indexer = hardwareMap.get(CRServo.class, "Indexer");
 
             navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
             gyro = (IntegratingGyroscope)navxMicro; //integratinggyroscope is a wrapper for navxmicronavigator
@@ -171,10 +153,5 @@ public class AutoDriveForward extends LinearOpMode {
                 telemetry.update();
             }
         }
-    /*int armofset =0;
-    public int getarmpos() {
-        return armMotor.getCurrentPosition() - armofset;
-        */
-
-    }
+}
 

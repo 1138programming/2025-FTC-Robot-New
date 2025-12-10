@@ -104,16 +104,6 @@ public class FieldRelativeDrive extends LinearOpMode {
             CRServo Indexer = hardwareMap.get(CRServo.class, "Indexer");
 
 
-        //private DcMotorEx armMotor = null;
-            //DcMotor intakeMotor = hardwareMap.get(DcMotorEx.class, "Intake");
-            //DcMotor flywheelMotor = hardwareMap.get(DcMotorEx.class, "Flywheel");
-
-        // teleMotor = hardwareMap.get(DcMotor.class, "tele");
-            //armMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfNew);
-
-
-            //Indexer = hardwareMap.get(CRServo.class, "Indexer");
-
             navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
             gyro = (IntegratingGyroscope)navxMicro; //integratinggyroscope is a wrapper for navxmicronavigator
 
@@ -157,8 +147,6 @@ public class FieldRelativeDrive extends LinearOpMode {
             // run until the end of the match (driver presses STOP)
             while (opModeIsActive()) {
 
-//                double left_right = gamepad1.right_stick_x;
-//                double up_down = gamepad1.left_stick_y;
 
                 // Combine the joystick requests for each axis-motion to determine each wheel's power.
                 // Set up a variable for each drive wheel to save the power level for telemetry.

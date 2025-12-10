@@ -49,11 +49,6 @@ public class PreLoadScoreAuton extends LinearOpMode {
         try {
             for (int i = 0; i < 4000; i++) { //rev flywheel before firing
                 flywheelMotor.setPower(flyWheelVelocity);
-//                if (i > 2000 && i < 3500){
-//                    intakeMotor.setPower(1);
-//                } else {
-//                    intakeMotor.setPower(0);
-//                }
 
                 Thread.sleep(1);
             }
@@ -110,10 +105,6 @@ public class PreLoadScoreAuton extends LinearOpMode {
         } catch (InterruptedException e) {
             telemetry.addData("Something went horribly wrong", e);
         }
-
-
-
-
 
 
 
