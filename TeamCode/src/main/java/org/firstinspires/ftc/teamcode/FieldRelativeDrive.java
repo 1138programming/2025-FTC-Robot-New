@@ -222,11 +222,11 @@ public class FieldRelativeDrive extends LinearOpMode {
     // pickup 204
 
 
-                if (gamepad1.y) {
+                if (gamepad2.y) {
 
                     Indexer.setPower(1);
                 }
-                else if (gamepad1.x) {
+                else if (gamepad2.x) {
                     Indexer.setPower(-1);
                 }
                 else {
@@ -235,11 +235,11 @@ public class FieldRelativeDrive extends LinearOpMode {
 
 
 
-                if (gamepad1.a) {
+                if (gamepad2.a) {
 
                     intakeMotor.setPower(1);
                 }
-                else if (gamepad1.b) {
+                else if (gamepad2.b) {
                     intakeMotor.setPower(-1);
                 }
                 else {
@@ -247,11 +247,11 @@ public class FieldRelativeDrive extends LinearOpMode {
 
                 }
 
-                if (gamepad1.right_bumper) {
+                if (gamepad2.right_bumper) {
 
                     flywheelMotor.setPower(-0.75);
                 }
-                else if (gamepad1.right_trigger > 0) {
+                else if (gamepad2.right_trigger > 0) {
 
                     flywheelMotor.setPower(-0.785);
                 }

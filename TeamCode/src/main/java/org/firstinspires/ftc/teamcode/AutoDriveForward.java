@@ -31,15 +31,15 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -70,7 +70,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 
-@Autonomous(name="AutonV2", group="Linear OpMode")
+@Autonomous(name="Autodrive67", group="Linear OpMode")
 
 public class AutoDriveForward extends LinearOpMode {
 
@@ -79,15 +79,11 @@ public class AutoDriveForward extends LinearOpMode {
     private DcMotor left = null;
     private DcMotor right = null;
     private CRServo Indexer = null;
-//    private IntegratingGyroscope gyro;
-//    private NavxMicroNavigationSensor navxMicro;
+    private IntegratingGyroscope gyro;
+    private NavxMicroNavigationSensor navxMicro;
     private boolean start = false;
     private boolean reversed  = false;
     private boolean lastpress = false;
-    private Drivebase drivebase;
-
-    private NavxMicroNavigationSensor navxMicro;
-    private IntegratingGyroscope gyro;
 
     @Override
     public void runOpMode() {
@@ -102,36 +98,44 @@ public class AutoDriveForward extends LinearOpMode {
             DcMotor leftBack = hardwareMap.get(DcMotor.class, "LeftBack");
             DcMotor rightBack = hardwareMap.get(DcMotor.class, "RightBack");
 
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
-
 
         //private DcMotorEx armMotor = null;
-            DcMotor intakeMotor = hardwareMap.get(DcMotorEx.class, "Intake");
-            DcMotor flywheelMotor = hardwareMap.get(DcMotorEx.class, "Flywheel");
+            //DcMotor intakeMotor = hardwareMap.get(DcMotorEx.class, "Intake");
+            //DcMotor flywheelMotor = hardwareMap.get(DcMotorEx.class, "Flywheel");
 
         // teleMotor = hardwareMap.get(DcMotor.class, "tele");
             //armMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfNew);
 
 
-            Indexer = hardwareMap.get(CRServo.class, "Indexer");
+            //Indexer = hardwareMap.get(CRServo.class, "Indexer");
 
             navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
-            gyro = (IntegratingGyroscope)navxMicro;
-
-            drivebase = new Drivebase(leftFront, leftBack, rightFront,rightBack, gyro);
+            gyro = (IntegratingGyroscope)navxMicro; //integratinggyroscope is a wrapper for navxmicronavigator
 
 
-;
+            // ########################################################################################
+            // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
+            // ########################################################################################
+            // Most robots need the motors ong one side to be reversed to drive forward.
+            // The motor reversals shown here are for a "direct drive" robot (the wheels turn the same direction as the motor shaft)
+            // If your robot has additional gear reductions or uses a right-angled drive, it's important to ensure
+            // that your motors are turning in the correct direction.  So, start out with the reversals here, BUT
+            // when you first test your robot, push the left joystick forward and observe the direction the wheels turn.
+            // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
+            // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
+            leftFront.setDirection(DcMotor.Direction.REVERSE);
+            rightFront.setDirection(DcMotor.Direction.FORWARD);
+            leftBack.setDirection(DcMotor.Direction.REVERSE);
+            rightBack.setDirection(DcMotor.Direction.FORWARD);
+            //rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+            //rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+            //Indexer.setDirection(CRServo.Direction.FORWARD);
+            //intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            //flywheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-            Indexer.setDirection(CRServo.Direction.FORWARD);
-            intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            flywheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
-
+        // A timer helps provide feedback while calibration is taking place
             ElapsedTime timer = new ElapsedTime();
 
             // Wait for the game to start (driver presses START)
@@ -141,11 +145,15 @@ public class AutoDriveForward extends LinearOpMode {
             waitForStart();
             runtime.reset();
 
-            drivebase.driveTime(0, 1, 0, false, 1, 1000, this);
-            flywheelMotor.setPower(1);
+            Drivebase drivebase = new Drivebase(leftFront, leftBack, rightFront, rightBack, gyro);
+
+            drivebase.drive(0,1,0,false,0.1f);
+
+            // run until the end of the match (driver presses STOP)
+            while (opModeIsActive()) {
 
 
-        // Show the elapsed game time and wheel power.
+                // Show the elapsed game time and wheel power.
                 telemetry.addData("Status", "Run Time: " + runtime.toString());
                 //telemetry.addData("Front left/Right", "%4.2f, %4.2f", FrontPower, rightFrontPower);
                 //telemetry.addData("Back  left/Right", "%4.2f, %4.2f", BackPower, rightBackPower);
@@ -157,12 +165,16 @@ public class AutoDriveForward extends LinearOpMode {
                 telemetry.addData("Last", last);
                 // telemetry.addData("ArmisBusyt", armMotor.isBusy());
                // telemetry.addData("target",  armTarget);
-    //            telemetry.addData("Gyro1",  gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).firstAngle);
-    //            telemetry.addData("Gyro2",  gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).secondAngle);
+                telemetry.addData("Gyro1",  gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.DEGREES).firstAngle);
+//                telemetry.addData("Gyro2",  gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).secondAngle);
                 telemetry.addData("Reversed:",reversed);
                 telemetry.update();
             }
         }
+    /*int armofset =0;
+    public int getarmpos() {
+        return armMotor.getCurrentPosition() - armofset;
+        */
 
-
+    }
 
