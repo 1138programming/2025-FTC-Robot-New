@@ -136,7 +136,8 @@ public class FieldRelativeDrive extends LinearOpMode {
             ElapsedTime timer = new ElapsedTime();
 
             // Wait for the game to start (driver presses START)
-            telemetry.addData("Status", "Initialized");
+            telemetry.addData("Status", "Ini67ti" +
+                    "alized");
             telemetry.update();
 
             waitForStart();

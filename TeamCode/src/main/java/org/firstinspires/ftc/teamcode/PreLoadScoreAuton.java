@@ -62,6 +62,7 @@ public class PreLoadScoreAuton extends LinearOpMode {
                 flywheelMotor.setPower(flyWheelVelocity);
                 Thread.sleep(1);
             }
+            flywheelMotor.setPower(0);
         } catch (InterruptedException e){
             telemetry.addData("Something went horribly wrong", e);
         }
