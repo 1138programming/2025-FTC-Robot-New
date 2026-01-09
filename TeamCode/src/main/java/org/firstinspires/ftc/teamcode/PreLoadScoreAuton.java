@@ -4,6 +4,7 @@ import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -14,7 +15,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 @Autonomous(name="PreloadScoringAuton41", group="LinearOpMode")
 public class PreLoadScoreAuton extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFront, rightFront, leftBack, rightBack, flywheelMotor, intakeMotor;
+    private DcMotor leftFront, rightFront, leftBack, rightBack, intakeMotor;
+    private DcMotorEx flywheelMotor;
     private IntegratingGyroscope gyro;
     private NavxMicroNavigationSensor navxMicro;
 
@@ -26,7 +28,7 @@ public class PreLoadScoreAuton extends LinearOpMode {
         leftBack = hardwareMap.get(DcMotor.class, "LeftBack");
         rightBack = hardwareMap.get(DcMotor.class, "RightBack");
         intakeMotor = hardwareMap.get(DcMotor.class, "Intake");
-        flywheelMotor = hardwareMap.get(DcMotor.class, "Flywheel");
+        flywheelMotor = hardwareMap.get(DcMotorEx.class, "Flywheel");
 
         navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
         gyro = (IntegratingGyroscope)navxMicro; //integratinggyroscope is a wrapper for navxmicronavigator
@@ -42,9 +44,8 @@ public class PreLoadScoreAuton extends LinearOpMode {
 
         Drivebase drivebase = new Drivebase(leftFront, leftBack, rightFront, rightBack, gyro);
         waitForStart();
-
         float flyWheelVelocity = -0.75f;
-
+        float intakeMotorVelocity = 0.8f;
         drivebase.driveTime(0,-1, 0, true,  0.5f, 1800, this);
         try {
             for (int i = 0; i < 4000; i++) { //rev flywheel before firing
@@ -58,7 +59,7 @@ public class PreLoadScoreAuton extends LinearOpMode {
 //first ball
         try {
             for (int i = 0; i < 500; i++) {
-                intakeMotor.setPower(-1); //spin intake motor to move it into the shooter flywheel
+                intakeMotor.setPower(-intakeMotorVelocity);//spin intake motor to move it into the shooter flywheel
                 flywheelMotor.setPower(flyWheelVelocity);
                 Thread.sleep(1);
             }
@@ -70,7 +71,7 @@ public class PreLoadScoreAuton extends LinearOpMode {
         try {
             for (int i = 0; i < 2000; i++) {
                 flywheelMotor.setPower(flyWheelVelocity); //keep flywheel revved
-                intakeMotor.setPower(1); //reset
+                intakeMotor.setPower(intakeMotorVelocity); //reset
                 Thread.sleep(1);
             }
         } catch (InterruptedException e) {

@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -12,12 +13,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class UpdatedIntakeAuton extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFront, rightFront, leftBack, rightBack, flywheelMotor, intakeMotor;
-    private CRServo Indexer;
+    private CRServo indexer;
     private IntegratingGyroscope gyro;
     private NavxMicroNavigationSensor navxMicro;
 
     private Drivebase drivebase;
-    private final float flyWheelVelocity = 0.75f;
+    private final float flyWheelVelocity = 0.767f;
 
     public void waitms(int ms){
         try {
@@ -32,7 +33,7 @@ public class UpdatedIntakeAuton extends LinearOpMode {
         }
     }
 
-    public void runMotorsForTime(DcMotor intake, DcMotor flywheel, CRServo indexer, int ms, boolean reversed){
+    public void runMotorsForTime(DcMotor intake, DcMotor flywheel, CRServo indexer, int ms, boolean reversed){ //worst method ever written
         boolean intakeFlag = intake != null;
         boolean flywheelFlag = flywheel != null;
         boolean indexerFlag = indexer != null;
@@ -44,8 +45,33 @@ public class UpdatedIntakeAuton extends LinearOpMode {
         waitms(ms);
     }
 
+    public void horizontalLeft(int time){
+        leftFront.setPower(0.5);
+        rightFront.setPower(-0.5);
+        leftBack.setPower(-0.5);
+        rightBack.setPower(0.5);
+        waitms(time);
+    }
+
     public void runAuton(){
-        drivebase.driveTime(0,-1, 0, true,  0.5f, 1800, this);
+        drivebase.driveTime(0,-1, 0, false,  0.5f, 1800, this);
+//        flywheelMotor.setPower(flyWheelVelocity);
+//        waitms(4000);
+//        indexer.setPower(1);
+//        flywheelMotor.setPower(flyWheelVelocity);
+//        waitms(4000);
+//        flywheelMotor.setPower(flyWheelVelocity);
+//        waitms(4000);
+//        intakeMotor.setPower(-1);
+//        indexer.setPower(1);
+//        flywheelMotor.setPower(flyWheelVelocity);
+//        waitms(4000);
+//        flywheelMotor.setPower(flyWheelVelocity);
+//        waitms(4000);
+        drivebase.driveTime(0, 0, 0.75f, false, 0.5f, 720, this);
+        horizontalLeft(550);
+        drivebase.driveTime(0, 1, 0, false, 0.5f, 400, this);
+        intakeMotor.setPower(-1);
 
     }
 
@@ -57,23 +83,23 @@ public class UpdatedIntakeAuton extends LinearOpMode {
         rightBack = hardwareMap.get(DcMotor.class, "RightBack");
         intakeMotor = hardwareMap.get(DcMotor.class, "Intake");
         flywheelMotor = hardwareMap.get(DcMotor.class, "Flywheel");
-        Indexer = hardwareMap.get(CRServo.class,"Indexer");
+        indexer = hardwareMap.get(CRServo.class,"Indexer");
         navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
         gyro = (IntegratingGyroscope)navxMicro; //integratinggyroscope is a wrapper for navxmicronavigator
         drivebase = new Drivebase(leftFront, leftBack, rightFront, rightBack, gyro);
-        flywheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftFront.setDirection(DcMotor.Direction.FORWARD);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
+        leftBack.setDirection(DcMotor.Direction.FORWARD);
+        rightBack.setDirection(DcMotor.Direction.REVERSE);
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        flywheelMotor.setDirection(DcMotor.Direction.REVERSE);
 
         waitForStart();
 
-
-
-
-            flywheelMotor.setPower(1);
-            intakeMotor.setPower(1);
-            waitms(2000);
-            flywheelMotor.setPower(0);
-            intakeMotor.setPower(0);
+        runAuton();
 
 
 
