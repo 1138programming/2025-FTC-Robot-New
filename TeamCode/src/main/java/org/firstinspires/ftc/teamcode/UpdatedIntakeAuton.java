@@ -18,7 +18,7 @@ public class UpdatedIntakeAuton extends LinearOpMode {
     private NavxMicroNavigationSensor navxMicro;
 
     private Drivebase drivebase;
-    private final float flyWheelVelocity = 0.767f;
+    private final float flyWheelVelocity = 0.75f;
 
     public void waitms(int ms){
         try {
@@ -53,8 +53,17 @@ public class UpdatedIntakeAuton extends LinearOpMode {
         waitms(time);
     }
 
+    public void driveForwardWithIntakeRunning(int timems){
+        leftFront.setPower(-0.5);
+        rightFront.setPower(-0.5);
+        leftBack.setPower(-0.5);
+        rightBack.setPower(-0.5);
+        intakeMotor.setPower(-1);
+        waitms(timems);
+    }
+
     public void runAuton(){
-        drivebase.driveTime(0,-1, 0, false,  0.5f, 1800, this);
+        drivebase.driveTime(0,-1, 0, false,  0.5f, 1600, this);
         flywheelMotor.setPower(flyWheelVelocity);
         waitms(4000);
         indexer.setPower(1);
@@ -69,13 +78,19 @@ public class UpdatedIntakeAuton extends LinearOpMode {
         flywheelMotor.setPower(flyWheelVelocity);
         waitms(4000);
         drivebase.driveTime(0, 0, 0.75f, false, 0.5f, 720, this);
-        horizontalLeft(800);
-        drivebase.driveTime(0, 1, 0, false, 0.5f, 2000, this);
+        horizontalLeft(600);
+        driveForwardWithIntakeRunning(900);
+        drivebase.driveTime(0, -1, 0, false, 0.5f, 900, this);
+        drivebase.driveTime(0, 0, -0.75f, false, 0.5f, 720, this);
+        flywheelMotor.setPower(flyWheelVelocity);
+        waitms(4000);
         intakeMotor.setPower(-1);
+        indexer.setPower(1);
+        flywheelMotor.setPower(flyWheelVelocity);
         waitms(4000);
 
     }
-
++
     @Override
     public void runOpMode(){
         leftFront  = hardwareMap.get(DcMotor.class, "LeftFront");
