@@ -55,19 +55,19 @@ public class UpdatedIntakeAuton extends LinearOpMode {
 
     public void runAuton(){
         drivebase.driveTime(0,-1, 0, false,  0.5f, 1800, this);
-//        flywheelMotor.setPower(flyWheelVelocity);
-//        waitms(4000);
-//        indexer.setPower(1);
-//        flywheelMotor.setPower(flyWheelVelocity);
-//        waitms(4000);
-//        flywheelMotor.setPower(flyWheelVelocity);
-//        waitms(4000);
-//        intakeMotor.setPower(-1);
-//        indexer.setPower(1);
-//        flywheelMotor.setPower(flyWheelVelocity);
-//        waitms(4000);
-//        flywheelMotor.setPower(flyWheelVelocity);
-//        waitms(4000);
+        flywheelMotor.setPower(flyWheelVelocity);
+        waitms(4000);
+        indexer.setPower(1);
+        flywheelMotor.setPower(flyWheelVelocity);
+        waitms(4000);
+        flywheelMotor.setPower(flyWheelVelocity);
+        waitms(4000);
+        intakeMotor.setPower(-1);
+        indexer.setPower(1);
+        flywheelMotor.setPower(flyWheelVelocity);
+        waitms(4000);
+        flywheelMotor.setPower(flyWheelVelocity);
+        waitms(4000);
         drivebase.driveTime(0, 0, 0.75f, false, 0.5f, 720, this);
         horizontalLeft(550);
         drivebase.driveTime(0, 1, 0, false, 0.5f, 400, this);
