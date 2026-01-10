@@ -18,34 +18,34 @@ public class UpdatedIntakeAuton extends LinearOpMode {
     private NavxMicroNavigationSensor navxMicro;
 
     private Drivebase drivebase;
-    private final float flyWheelVelocity = 0.75f;
+    private final float flyWheelVelocity = 0.78f; //haha 67
 
-    public void waitms(int ms){
+    public void waitms(int ms) {
         try {
             for (int i = 0; i < ms; i++) {
                 if (opModeIsActive()) {
                     Thread.sleep(1);
                 }
             }
-        } catch (InterruptedException e){
+        } catch (InterruptedException e) {
             telemetry.addData("Something went horribly wrong", e);
             telemetry.update();
         }
     }
 
-    public void runMotorsForTime(DcMotor intake, DcMotor flywheel, CRServo indexer, int ms, boolean reversed){ //worst method ever written
+    public void runMotorsForTime(DcMotor intake, DcMotor flywheel, CRServo indexer, int ms, boolean reversed) { //worst method ever written
         boolean intakeFlag = intake != null;
         boolean flywheelFlag = flywheel != null;
         boolean indexerFlag = indexer != null;
 
         if (intakeFlag) intake.setPower(reversed ? -1 : 1);
-        if (flywheelFlag) flywheel.setPower(reversed ? -flyWheelVelocity:flyWheelVelocity);
+        if (flywheelFlag) flywheel.setPower(reversed ? -flyWheelVelocity : flyWheelVelocity);
         if (indexerFlag) indexer.setPower(reversed ? -1 : 1);
 
         waitms(ms);
     }
 
-    public void horizontalLeft(int time){
+    public void horizontalLeft(int time) {
         leftFront.setPower(0.5);
         rightFront.setPower(-0.5);
         leftBack.setPower(-0.5);
@@ -53,7 +53,15 @@ public class UpdatedIntakeAuton extends LinearOpMode {
         waitms(time);
     }
 
-    public void driveForwardWithIntakeRunning(int timems){
+    public void horizontalRight(int time){
+        leftFront.setPower(-0.5);
+        rightFront.setPower(0.5);
+        leftBack.setPower(0.5);
+        rightBack.setPower(-0.5);
+        waitms(time);
+    }
+
+    public void driveForwardWithIntakeRunning(int timems) {
         leftFront.setPower(-0.5);
         rightFront.setPower(-0.5);
         leftBack.setPower(-0.5);
@@ -61,27 +69,43 @@ public class UpdatedIntakeAuton extends LinearOpMode {
         intakeMotor.setPower(-1);
         waitms(timems);
     }
+    /*
+    //public void turnFlyWheel(int s) {
+        flywheelMotor.setPower(flyWheelVVelocity);
+        waitms(s);
+    }
+    */
+
+
 
     public void runAuton(){
-        drivebase.driveTime(0,-1, 0, false,  0.5f, 1600, this);
+        drivebase.driveTime(0,-1, 0, false,  0.5f, 800, this);
         flywheelMotor.setPower(flyWheelVelocity);
-        waitms(4000);
+        waitms(5000);
         indexer.setPower(1);
         flywheelMotor.setPower(flyWheelVelocity);
         waitms(4000);
-        flywheelMotor.setPower(flyWheelVelocity);
+        indexer.setPower(1);
+        flywheelMotor.setPower(0.81f);
+        intakeMotor.setPower(-1);
         waitms(4000);
         intakeMotor.setPower(-1);
+        flywheelMotor.setPower(0.81f);
+        waitms(2000);
         indexer.setPower(1);
+        intakeMotor.setPower(-1);
         flywheelMotor.setPower(flyWheelVelocity);
-        waitms(4000);
+        waitms(2000);
+
         flywheelMotor.setPower(flyWheelVelocity);
         waitms(4000);
         drivebase.driveTime(0, 0, 0.75f, false, 0.5f, 720, this);
-        horizontalLeft(600);
-        driveForwardWithIntakeRunning(900);
+        horizontalLeft(550);
+        driveForwardWithIntakeRunning(80);
+        waitms(1000);
         drivebase.driveTime(0, -1, 0, false, 0.5f, 900, this);
         drivebase.driveTime(0, 0, -0.75f, false, 0.5f, 720, this);
+        horizontalRight(750);
         flywheelMotor.setPower(flyWheelVelocity);
         waitms(4000);
         intakeMotor.setPower(-1);
@@ -90,7 +114,7 @@ public class UpdatedIntakeAuton extends LinearOpMode {
         waitms(4000);
 
     }
-+
+
     @Override
     public void runOpMode(){
         leftFront  = hardwareMap.get(DcMotor.class, "LeftFront");
