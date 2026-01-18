@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+
 public class Drivebase {
     DcMotor LF,LB,RF,RB;
     IntegratingGyroscope gyro;
@@ -22,6 +24,15 @@ public class Drivebase {
     AngularVelocity angle;
 
     float fieldRot;
+
+    private final int encoderTicksPerRevolution = 28;
+    private final float wheelCircumferenceIn = 3.75f;
+
+    PIDFController Lpidf, Rpidf;
+
+    double kP, kI, kD, kF;
+
+
 
     public Drivebase(DcMotor LF, DcMotor LB, DcMotor RF, DcMotor RB, IntegratingGyroscope gyro){
         this.LF =LF;
@@ -38,6 +49,11 @@ public class Drivebase {
 
 
         orientation.getRotationMatrix().getData();
+
+        kP = 0.4;
+        kI = 0.000001;
+        kD = 0.002;
+        kF = 0;
 
     }
 
@@ -129,19 +145,6 @@ public class Drivebase {
         VectorF nVector =  RotMatrix.multiplied(SVector);
 
         drive(nVector.get(0),nVector.get(1),Rot,reversed, speed);
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 
 
@@ -156,15 +159,33 @@ public class Drivebase {
     }
 
     public void resetFieldRot() {
-
-
         fieldRot = getAdjustedAngle();
+    }
+
+    public void driveDistance(int inches) {
+        Lpidf = new PIDFController(kP, kI, kD, kF);
+        Rpidf = new PIDFController(kP, kI, kD, kF);
+
+        float revolution = (float) inches / wheelCircumferenceIn;
+        int ticksNeeded = (int) Math.round(revolution * 28);
+
+        Lpidf.setSetPoint(ticksNeeded);
+        Rpidf.setSetPoint(ticksNeeded);
+
+
+        while (!Lpidf.atSetPoint()){
+            double leftOutput = Lpidf.calculate(LF.getCurrentPosition());
+            double rightOutput = Rpidf.calculate(RF.getCurrentPosition());
+
+            LF.setPower(leftOutput);
+            RF.setPower(leftOutput);
+            LB.setPower(rightOutput);
+            RB.setPower(rightOutput);
+        }
+
 
     }
 
-    public void driveDist() {
-
-    }
     public void driveTime(float x_velocity, float y_velocity, float Rot, boolean reversed, float speed, int time, LinearOpMode opmode )  {
         try {
             for (int x = 0; x < time; x++) {
