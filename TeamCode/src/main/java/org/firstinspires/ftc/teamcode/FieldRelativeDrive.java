@@ -272,6 +272,9 @@ public class FieldRelativeDrive extends LinearOpMode {
                 telemetry.addData("Gyro1",  gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.DEGREES).firstAngle);
 //                telemetry.addData("Gyro2",  gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).secondAngle);
                 telemetry.addData("Reversed:",reversed);
+                telemetry.addData("dist", drivebase.getEncoderdist(leftFront));
+                telemetry.addData("Ticks", leftFront.getCurrentPosition());
+
                 telemetry.update();
             }
         }

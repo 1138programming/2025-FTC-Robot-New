@@ -8,7 +8,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 
-@Autonomous(name = "LimelightAutonKatieAnay4167", group = "Linear OpMode")
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+@Autonomous(name = "LimelightAutonKatieIan4167", group = "Linear OpMode")
 public class LimelightAuton extends LinearOpMode {
     private DcMotor leftFront, rightFront, leftBack, rightBack, intakeMotor;
     private Limelight3A limelight;
@@ -41,10 +43,10 @@ public class LimelightAuton extends LinearOpMode {
         navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
         gyro = (IntegratingGyroscope) navxMicro; //IntegratingGyroscope is a wrapper for navxmicronavigator
 
-//        leftFront.setDirection(DcMotor.Direction.REVERSE);
-//        rightFront.setDirection(DcMotor.Direction.FORWARD);
-//        leftBack.setDirection(DcMotor.Direction.REVERSE);
-//        rightBack.setDirection(DcMotor.Direction.FORWARD);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        rightBack.setDirection(DcMotor.Direction.FORWARD);
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -58,8 +60,17 @@ public class LimelightAuton extends LinearOpMode {
         float flyWheelVelocity = -0.75f;
         float intakeMotorVelocity = 0.8f;
 
-        drivebase.driveDistance(12);
+        telemetry.addData("dist", drivebase.getEncoderdist(leftFront));
+        telemetry.update();
 
+        drivebase.driveDistance(5);
+        // doesnt always end up in the same place due to drift. either overshotots or undershoots and the distance on screen does not align with actual distance
+
+
+        telemetry.addData("dist", drivebase.getEncoderdist(leftFront));
+        telemetry.update();
+
+        waitTime(5000);
 
     }
 }

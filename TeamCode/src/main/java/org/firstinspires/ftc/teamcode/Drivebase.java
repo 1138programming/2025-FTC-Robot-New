@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -25,7 +26,7 @@ public class Drivebase {
 
     float fieldRot;
 
-    private final int encoderTicksPerRevolution = 28;
+    private final float encoderTicksPerRevolution = 537.7f;
     private final float wheelCircumferenceIn = 3.75f;
 
     PIDFController Lpidf, Rpidf;
@@ -161,27 +162,48 @@ public class Drivebase {
     public void resetFieldRot() {
         fieldRot = getAdjustedAngle();
     }
-
+    public float getEncoderdist(DcMotor motor) {
+        return ((float)motor.getCurrentPosition() / encoderTicksPerRevolution) * wheelCircumferenceIn;
+    }
     public void driveDistance(int inches) {
+        LF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         Lpidf = new PIDFController(kP, kI, kD, kF);
         Rpidf = new PIDFController(kP, kI, kD, kF);
 
-        float revolution = (float) inches / wheelCircumferenceIn;
-        int ticksNeeded = (int) Math.round(revolution * 28);
+        Lpidf.setSetPoint(inches);
+        Rpidf.setSetPoint(inches);
 
-        Lpidf.setSetPoint(ticksNeeded);
-        Rpidf.setSetPoint(ticksNeeded);
+        Lpidf.setTolerance(0.1);
+        Rpidf.setTolerance(0.1);
 
 
         while (!Lpidf.atSetPoint()){
-            double leftOutput = Lpidf.calculate(LF.getCurrentPosition());
-            double rightOutput = Rpidf.calculate(RF.getCurrentPosition());
+            double leftOutput = Lpidf.calculate(getEncoderdist(LF));
+            double rightOutput = Rpidf.calculate(getEncoderdist(RF));
 
             LF.setPower(leftOutput);
-            RF.setPower(leftOutput);
-            LB.setPower(rightOutput);
+            LB.setPower(leftOutput);
+            RF.setPower(rightOutput);
             RB.setPower(rightOutput);
-        }
+
+        }//Anay fix this its weoirdluy namr4sd
+
+//        LF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        LB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        RF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        RB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
     }
