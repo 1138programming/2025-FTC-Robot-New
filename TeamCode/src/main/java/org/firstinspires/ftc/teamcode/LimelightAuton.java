@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -13,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Autonomous(name = "LimelightAutonKatieIan4167", group = "Linear OpMode")
 public class LimelightAuton extends LinearOpMode {
     private DcMotor leftFront, rightFront, leftBack, rightBack, intakeMotor;
-    private Limelight3A limelight;
+    private Limelight limelight;
     private DcMotorEx flywheelMotor;
     private IntegratingGyroscope gyro;
     private NavxMicroNavigationSensor navxMicro;
@@ -38,10 +39,11 @@ public class LimelightAuton extends LinearOpMode {
         rightBack = hardwareMap.get(DcMotor.class, "RightBack");
         intakeMotor = hardwareMap.get(DcMotor.class, "Intake");
         flywheelMotor = hardwareMap.get(DcMotorEx.class, "Flywheel");
-        //limelight = hardwareMap.get(Limelight3A.class, "Limelight");
+        Limelight3A limelight1 = hardwareMap.get(Limelight3A.class, "Limelight67");
 
         navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
         gyro = (IntegratingGyroscope) navxMicro; //IntegratingGyroscope is a wrapper for navxmicronavigator
+        limelight = new Limelight(limelight1);
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         rightFront.setDirection(DcMotor.Direction.FORWARD);
@@ -60,17 +62,24 @@ public class LimelightAuton extends LinearOpMode {
         float flyWheelVelocity = -0.75f;
         float intakeMotorVelocity = 0.8f;
 
-        telemetry.addData("dist", drivebase.getEncoderdist(leftFront));
-        telemetry.update();
+        while(opModeIsActive()){
+            telemetry.addData("dist", drivebase.getEncoderdist(leftFront));
 
-        drivebase.driveDistance(5);
-        // doesnt always end up in the same place due to drift. either overshotots or undershoots and the distance on screen does not align with actual distance
+            telemetry.addData("Tx", limelight.getTx());
+            telemetry.update();
+        }
 
 
-        telemetry.addData("dist", drivebase.getEncoderdist(leftFront));
-        telemetry.update();
-
-        waitTime(5000);
+/*
+* rf-0
+* lf-1
+* lb-3
+* rb-2
+*
+* indexer e - 1
+* intake e - 3
+*
+* */
 
     }
 }
