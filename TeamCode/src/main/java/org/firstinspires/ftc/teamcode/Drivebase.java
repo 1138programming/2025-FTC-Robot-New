@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
 public class Drivebase {
@@ -28,10 +29,15 @@ public class Drivebase {
 
     private final float encoderTicksPerRevolution = 537.7f;
     private final float wheelCircumferenceIn = 3.75f;
+    private final double maxAngularWheelVelocity = 0.5;
+    private final double KacceptableAngularError = 3;
 
     PIDFController Lpidf, Rpidf;
 
-    double kP, kI, kD, kF;
+    double drivekP, drivekI, drivekD, drivekF;
+    double rotationkP, rotationkI, rotationkD, rotationkF;
+    Telemetry telemetry;
+
 
 
 
@@ -50,14 +56,23 @@ public class Drivebase {
 
 
         orientation.getRotationMatrix().getData();
+        drivekP = 0.4;
+        drivekI = 0.000001;
+        drivekD = 0.002;
+        drivekF = 0;
 
-        kP = 0.4;
-        kI = 0.000001;
-        kD = 0.002;
-        kF = 0;
+        rotationkP = 0.02;
+        rotationkI = 0;
+        rotationkD = 0.01;
+        rotationkF = 0;
+
+
 
     }
 
+    public void addTelemetry(Telemetry telemetry){
+        this.telemetry = telemetry;
+    }
 
     public void drive(float x_velocity, float y_velocity, float Rot, boolean reversed, float speed) {
         double max;
@@ -175,8 +190,8 @@ public class Drivebase {
         RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        Lpidf = new PIDFController(kP, kI, kD, kF);
-        Rpidf = new PIDFController(kP, kI, kD, kF);
+        Lpidf = new PIDFController(drivekP, drivekI, drivekD, drivekF);
+        Rpidf = new PIDFController(drivekP, drivekI, drivekD, drivekF);
 
         Lpidf.setSetPoint(inches);
         Rpidf.setSetPoint(inches);
@@ -211,6 +226,61 @@ public class Drivebase {
 
 
     }
+
+    public double getYaw(){
+        return gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.DEGREES).firstAngle;
+    }
+
+    public double clampOutput(double output, double max){
+        return Math.max(-max, Math.min(max, output));
+    }
+
+    public void waitTime(int time){
+        long startTime = System.currentTimeMillis();
+
+        while (System.currentTimeMillis() - startTime < time){
+            continue;
+        }
+    }
+
+    public double abs(double x){
+        return x > 0 ? x : -x;
+    }
+
+
+
+    public void rotateDegrees(int degrees){
+        PIDFController pidController = new PIDFController(rotationkP, rotationkI, rotationkD, rotationkF);
+        double yaw = getYaw();
+        double target = degrees + yaw;
+        double error = 4;
+
+        while (abs(error) >= KacceptableAngularError) {
+
+            error = target - getYaw();
+            if (error > 180) error -= 360;
+            if (error < -180) error += 360;
+            double output = pidController.calculate(0, error);
+
+
+            telemetry.addData("Target", target);
+            telemetry.addData("Robot yaw:", getYaw());
+            telemetry.addData("Initial yaw:", yaw);
+            telemetry.addData("Current error: ", error);
+            telemetry.addData("Abs test", Math.abs(error));
+            telemetry.update();
+
+            LF.setPower(clampOutput(output, maxAngularWheelVelocity));
+            LB.setPower(clampOutput(output, maxAngularWheelVelocity));
+            RF.setPower(clampOutput(-output, maxAngularWheelVelocity));
+            RB.setPower(clampOutput(-output, maxAngularWheelVelocity));
+        }
+
+
+
+
+
+        }
 
     public void driveTime(float x_velocity, float y_velocity, float Rot, boolean reversed, float speed, int time, LinearOpMode opmode )  {
         try {

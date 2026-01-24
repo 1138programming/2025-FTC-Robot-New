@@ -60,8 +60,9 @@ public class LimelightAuton extends LinearOpMode {
         waitForStart();
         float flyWheelVelocity = -0.75f;
         float intakeMotorVelocity = 0.8f;
+        drivebase.addTelemetry(telemetry);
 
-        drivebase.driveDistance(-12);
+        drivebase.rotateDegrees(90);
 
 
 /*
