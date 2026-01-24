@@ -19,8 +19,7 @@ public class LimelightAuton extends LinearOpMode {
     private IntegratingGyroscope gyro;
     private NavxMicroNavigationSensor navxMicro;
 
-    private final int encoderTicksPerRevolution = 28;
-    private final float wheelCircumferenceIn = 3.75f;
+
 
     public void waitTime(int time){
         long startTime = System.currentTimeMillis();
@@ -62,12 +61,7 @@ public class LimelightAuton extends LinearOpMode {
         float flyWheelVelocity = -0.75f;
         float intakeMotorVelocity = 0.8f;
 
-        while(opModeIsActive()){
-            telemetry.addData("dist", drivebase.getEncoderdist(leftFront));
-
-            telemetry.addData("Tx", limelight.getTx());
-            telemetry.update();
-        }
+        drivebase.driveDistance(-12);
 
 
 /*
