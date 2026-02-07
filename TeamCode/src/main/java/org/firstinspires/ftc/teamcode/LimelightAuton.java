@@ -62,7 +62,6 @@ public class LimelightAuton extends LinearOpMode {
         float intakeMotorVelocity = 0.8f;
         drivebase.addTelemetry(telemetry);
 
-        drivebase.rotateDegrees(90);
 
 
 /*

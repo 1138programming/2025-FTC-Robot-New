@@ -1,48 +1,87 @@
 package org.firstinspires.ftc.teamcode;
 
-import java.util.List;
+
 import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes.*;
+import com.qualcomm.hardware.limelightvision.LLResultTypes.DetectorResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
+
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.teamcode.Drivebase;
+
+
+import java.util.List;
 
 
 public class Limelight {
-    Limelight3A limelight;
-    public Limelight(Limelight3A limelight){
+
+
+    private final Limelight3A limelight;
+
+
+    public Limelight(Limelight3A limelight) {
         this.limelight = limelight;
-        this.limelight.setPollRateHz(100);
-        this.limelight.start();
-        this.limelight.pipelineSwitch(0);
+        limelight.setPollRateHz(100);
+        limelight.pipelineSwitch(0); // AprilTag pipeline
+        limelight.start();
     }
 
-    public double getTx(){
-        LLResult result = limelight.getLatestResult();
+
+    private LLResult getResult() {
+        return limelight.getLatestResult();
+    }
+
+
+    public boolean hasTarget() {
+        LLResult result = getResult();
+        return result != null && result.isValid();
+    }
+
+
+    public double getTx() {
+        LLResult result = getResult();
+        if (result == null) return 0;
         return result.getTx();
     }
 
-    public double getTy(){
-        LLResult result = limelight.getLatestResult();
+
+    public double getTy() {
+        LLResult result = getResult();
+        if (result == null) return 0;
         return result.getTy();
     }
-    public int getTid(){
-        LLResult result = limelight.getLatestResult();
-        List<DetectorResult> detectorResults = result.getDetectorResults();
 
-        if (!detectorResults.isEmpty()){
-            return detectorResults.get(0).getClassId();
-        }
-        return 0;
-    }
 
-    public void setBotOrientation(double yaw){
-        limelight.updateRobotOrientation(yaw);
-    }
+    public int getTagId() {
+        LLResult result = getResult();
+        if (result == null) return -1;
 
-    public Pose3D getBotPose(){
-        return limelight.getLatestResult().getBotpose_MT2();
+
+        List<DetectorResult> results = result.getDetectorResults();
+        if (results.isEmpty()) return -1;
+
+
+        return results.get(0).getClassId();
     }
 
 
+    public Pose3D getBotPose() {
+        LLResult result = getResult();
+        if (result == null) return null;
+        return result.getBotpose();
+    }
+
+
+    public void updateRobotYaw(double yawDegrees) {
+        limelight.updateRobotOrientation(yawDegrees);
+    }
+
+
+    // Rotate robot to center target
+    public void alignToTarget(Drivebase drivebase) {
+        double kP = 0.02;
+        double turnPower = getTx() * kP;
+    }
 }
+
+
