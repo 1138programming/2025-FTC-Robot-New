@@ -17,6 +17,7 @@ public class Limelight {
 
 
     private final Limelight3A limelight;
+    private final double kAcceptableDegreeError = 0.1;
 
 
     public Limelight(Limelight3A limelight) {
@@ -79,8 +80,10 @@ public class Limelight {
 
     // Rotate robot to center target
     public void alignToTarget(Drivebase drivebase) {
-        double kP = 0.02;
-        double turnPower = getTx() * kP;
+        double degreesToRotate = (-getTx()) - 180;
+        while (Math.abs(getTx()) > kAcceptableDegreeError) {
+            drivebase.rotateDegrees(degreesToRotate);
+        }
     }
 }
 

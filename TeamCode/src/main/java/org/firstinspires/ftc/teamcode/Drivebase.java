@@ -30,7 +30,7 @@ public class Drivebase {
     private final float encoderTicksPerRevolution = 537.7f;
     private final float wheelCircumferenceIn = 3.75f;
     private final double maxAngularWheelVelocity = 0.5;
-    private final double KacceptableAngularError = 3;
+    private final double KacceptableAngularError = 2;
 
     PIDFController Lpidf, Rpidf;
 
@@ -249,13 +249,13 @@ public class Drivebase {
 
 
 
-    public void rotateDegrees(int degrees){
+    public void rotateDegrees(double degrees){
         PIDFController pidController = new PIDFController(rotationkP, rotationkI, rotationkD, rotationkF);
         double yaw = getYaw();
         double target = degrees + yaw;
         double error = 4;
 
-        while (abs(error) >= KacceptableAngularError) {
+        while (abs(error) >= KacceptableAngularError && 180 - abs(error) >= 3) {
 
             error = target - getYaw();
             if (error > 180) error -= 360;
@@ -275,12 +275,15 @@ public class Drivebase {
             RF.setPower(clampOutput(-output, maxAngularWheelVelocity));
             RB.setPower(clampOutput(-output, maxAngularWheelVelocity));
         }
+        LF.setPower(0);
+        LB.setPower(0);
+        RF.setPower(0);
+        RB.setPower(0);
 
 
 
 
-
-        }
+    }
 
     public void driveTime(float x_velocity, float y_velocity, float Rot, boolean reversed, float speed, int time, LinearOpMode opmode )  {
         try {

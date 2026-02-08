@@ -18,6 +18,7 @@ public class LimelightAuton extends LinearOpMode {
     private DcMotorEx flywheelMotor;
     private IntegratingGyroscope gyro;
     private NavxMicroNavigationSensor navxMicro;
+    private Flywheel flywheel;
 
 
 
@@ -43,6 +44,9 @@ public class LimelightAuton extends LinearOpMode {
         navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
         gyro = (IntegratingGyroscope) navxMicro; //IntegratingGyroscope is a wrapper for navxmicronavigator
         limelight = new Limelight(limelight1);
+        flywheel = new Flywheel(flywheelMotor);
+        flywheel.addTelemetry(telemetry);
+
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         rightFront.setDirection(DcMotor.Direction.FORWARD);
@@ -61,6 +65,10 @@ public class LimelightAuton extends LinearOpMode {
         float flyWheelVelocity = -0.75f;
         float intakeMotorVelocity = 0.8f;
         drivebase.addTelemetry(telemetry);
+
+        limelight.alignToTarget(drivebase);
+        waitTime(200);
+        flywheel.calculateFlywheelPID();
 
 
 
